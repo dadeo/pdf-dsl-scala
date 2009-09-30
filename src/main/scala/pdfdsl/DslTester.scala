@@ -6,6 +6,12 @@ object DslTester extends Application with PdfDsl {
     write text "hello world 5" at (25, 35) page 5
     write text "hello world 6" at (26, 36) page 6
     write text "hello world 7" at (27, 37) page 7
+
+    section page 5 at (100, 500) contains {
+      line text "pinky jones"
+      line text "123 main st"
+      line text "des moines, ia 50023"
+    }
   }
 
   stamp("filename") {
