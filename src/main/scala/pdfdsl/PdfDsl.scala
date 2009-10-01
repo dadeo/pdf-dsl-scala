@@ -26,6 +26,8 @@ trait PdfDsl {
 
   implicit def convert(s: String): File = new File(s)
 
+  private implicit def convert(map:Map[String, Any]) = new MapWrapper(map)
+
   class Write
   val write = new Write
 
@@ -50,12 +52,10 @@ trait PdfDsl {
         var coordinates : Map[String, Any] = Map.empty
         for (sectionInternal <- section.internals) sectionInternal match {
           case _: LineDsl =>
-            val attributes = defaults ++ section.lingo ++ coordinates ++ sectionInternal.lingo
-            stamperWrapper.stamp(attributes)
-            val fontSize = attributes("FONT_SIZE") match { case size : Int => size }
-            attributes("AT") match { case (x:Number, y:Number) =>
-              coordinates = Map("AT"->(x, y.floatValue - fontSize.floatValue))
-            }
+            val mapWrapper = new MapWrapper(defaults ++ section.lingo ++ coordinates ++ sectionInternal.lingo)
+            stamperWrapper.stamp(mapWrapper)
+            val(x, y) = mapWrapper.at
+            coordinates = Map("AT"->(x, y.floatValue - mapWrapper.fontSize))
         }
     }
     stamperWrapper.bytes
@@ -114,26 +114,30 @@ trait PdfDsl {
     override def toString: String = "SectionDsl" + lingo.toString + "\n" + internals.mkString("\n")
   }
 
+  class MapWrapper(mapIn:Map[String, Any]) {
+    val text = mapIn("TEXT").toString
+    val at = mapIn("AT") match { case (x: Number, y: Number) => (x.floatValue, y.floatValue) }
+    val fontSize = mapIn("FONT_SIZE") match { case size: Int => size.floatValue }
+    val page = mapIn("PAGE") match { case page: Int => page }
+    val baseFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+  }
+
   class StamperWrapper(bytesIn: Array[Byte]) {
     private val reader = new PdfReader(bytesIn)
     private val out = new ByteArrayOutputStream
     private val stamper = new PdfStamper(reader, out);
 
-    def stamp(attributes: Map[String, Any]) {
-      val bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
-      val page = attributes("PAGE") match { case page: Int => page }
-      val fontSize = attributes("FONT_SIZE") match { case size: Int => size }
-      val over = stamper.getOverContent(page)
+    def stamp(values: MapWrapper) {
+      val over = stamper.getOverContent(values.page)
       over.beginText();
-      over.setFontAndSize(bf, fontSize.floatValue)
-      attributes("AT") match {
-        case (x: Number, y: Number) => over.setTextMatrix(x.floatValue, y.floatValue)
-      }
-      over.showText(attributes("TEXT").toString)
+      over.setFontAndSize(values.baseFont, values.fontSize)
+      val(x, y) = values.at
+      over.setTextMatrix(x, y)
+      over.showText(values.text)
       over.endText();
     }
 
-    def bytes: Array[byte] = {
+    def bytes = {
       stamper.close
       out.toByteArray
     }
