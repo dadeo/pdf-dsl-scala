@@ -5,64 +5,56 @@ import com.lowagie.text.Rectangle
 
 object Locations {
   trait Location {
-    def value: float = 0
+    def value(rect: Rectangle, mapWrapper: MapWrapper): Float
 
-    protected var operations: List[Tuple2[String, Location]] = Nil
+    def -(other: Location): Location = new ResultLocation(List(("+", this), ("-", other)))
 
-    def value(rect: Rectangle, mapWrapper: MapWrapper): float = {
-      operations.foldLeft(value) {
-        (v: float, tuple: Tuple2[String, Location]) =>
+    def +(other: Location): Location = new ResultLocation(List(("+", this), ("+", other)))
+
+    def /(other: Location): Location = new ResultLocation(List(("+", this), ("/", other)))
+
+    def *(other: Location): Location = new ResultLocation(List(("+", this), ("*", other)))
+  }
+
+  class ResultLocation(operations: List[Tuple2[String, Location]]) extends Location {
+    def value(rect: Rectangle, mapWrapper: MapWrapper) = {
+      operations.foldLeft(0f) {
+        (v, tuple) =>
                 tuple._1 match {
                   case "-" => v - tuple._2.value(rect, mapWrapper)
                   case "+" => v + tuple._2.value(rect, mapWrapper)
+                  case "/" => v / tuple._2.value(rect, mapWrapper)
+                  case "*" => v * tuple._2.value(rect, mapWrapper)
                 }
       }
     }
-
-    def -(other: Location): Location = {
-      val result = new BaseLocation(0f)
-      result.operations += ("+", this)
-      result.operations += ("-", other)
-      result
-    }
-
-    def +(other: Location): Location = {
-      val result = new BaseLocation(0f)
-      result.operations += ("+", this)
-      result.operations += ("+", other)
-      result
-    }
   }
 
-  class BaseLocation(override val value: float) extends Location
+  class BaseLocation(val value: Float) extends Location {
+    def value(rect: Rectangle, mapWrapper: MapWrapper) = value
+  }
 
   object top extends Location {
-    override def value(rect: Rectangle, mapWrapper: MapWrapper): float = {
-      super.value(rect, mapWrapper) + rect.getTop
-    }
+    def value(rect: Rectangle, mapWrapper: MapWrapper) = rect.getTop
   }
 
   object bottom extends Location {
-    override def value(rect: Rectangle, mapWrapper: MapWrapper): float = {
-      super.value(rect, mapWrapper) + rect.getBottom
-    }
+    def value(rect: Rectangle, mapWrapper: MapWrapper) = rect.getBottom
   }
 
   object left extends Location {
-    override def value(rect: Rectangle, mapWrapper: MapWrapper): float = {
-      super.value(rect, mapWrapper) + rect.getLeft
-    }
+    def value(rect: Rectangle, mapWrapper: MapWrapper) = rect.getLeft
   }
 
   object right extends Location {
-    override def value(rect: Rectangle, mapWrapper: MapWrapper): float = {
-      super.value(rect, mapWrapper) + rect.getRight
-    }
+    def value(rect: Rectangle, mapWrapper: MapWrapper) = rect.getRight
+  }
+
+  object center extends Location {
+    def value(rect: Rectangle, mapWrapper: MapWrapper) = (rect.getRight - rect.getLeft) / 2
   }
 
   object fontSize extends Location {
-    override def value(rect: Rectangle, mapWrapper: MapWrapper): float = {
-      super.value(rect, mapWrapper) + mapWrapper.fontSize
-    }
+    def value(rect: Rectangle, mapWrapper: MapWrapper) = mapWrapper.fontSize
   }
 }
