@@ -1,6 +1,7 @@
 package pdfdsl.support
 
 
+import support.Locations.Location
 
 class WriteDsl extends InternalDsl {
   def text(value: String) = {
@@ -8,7 +9,7 @@ class WriteDsl extends InternalDsl {
     this
   }
 
-  def at(coordinates: Tuple2[Number, Number]) = {
+  def at(coordinates: Tuple2[Location, Location]) = {
     lingo += ("AT" -> coordinates)
     this
   }

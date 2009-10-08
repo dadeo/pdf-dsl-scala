@@ -3,6 +3,7 @@ package pdfdsl
 import com.lowagie.text.pdf.{PdfReader, PdfStamper, BaseFont}
 import java.io.{File, ByteArrayOutputStream, FileInputStream}
 import support._
+import support.Locations.{BaseLocation, Location}
 
 trait PdfDsl {
   implicit def convert(w: Write) = {
@@ -24,6 +25,10 @@ trait PdfDsl {
     lineDsl
   }
 
+  implicit def convert(number: Int): Location = {
+    new BaseLocation(number.floatValue)
+  }
+
   implicit def convert(s: String): File = new File(s)
 
   class Write
@@ -34,6 +39,12 @@ trait PdfDsl {
 
   class Section
   val section = new Section
+
+  val top = Locations.top
+  val bottom = Locations.bottom
+  val left = Locations.left
+  val right = Locations.right
+  val fontSize = Locations.fontSize
 
   var internals: List[InternalDsl] = List()
   var currentSection: SectionDsl = null
