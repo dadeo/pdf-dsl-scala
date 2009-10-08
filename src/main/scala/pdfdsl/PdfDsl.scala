@@ -26,8 +26,6 @@ trait PdfDsl {
 
   implicit def convert(s: String): File = new File(s)
 
-  private implicit def convert(map:Map[String, Any]) = new MapWrapper(map)
-
   class Write
   val write = new Write
 
@@ -43,26 +41,17 @@ trait PdfDsl {
 
   def stamp(contents: Array[byte])(f: => Unit) = {
     internals = List()
+
     f
+
     val stamperWrapper = new StamperWrapper(contents)
-    for (internal <- internals) internal match {
-      case _: WriteDsl =>
-        stamperWrapper.stamp(defaults++internal.lingo)
-      case section: SectionDsl =>
-        var coordinates : Map[String, Any] = Map.empty
-        for (sectionInternal <- section.internals) sectionInternal match {
-          case _: LineDsl =>
-            val mapWrapper = new MapWrapper(defaults ++ section.lingo ++ coordinates ++ sectionInternal.lingo)
-            stamperWrapper.stamp(mapWrapper)
-            val(x, y) = mapWrapper.at
-            coordinates = Map("AT"->(x, y.floatValue - mapWrapper.fontSize))
-        }
-    }
+    internals.foreach { _.stampWith(stamperWrapper, defaults) }
     stamperWrapper.bytes
   }
 
   trait InternalDsl {
     var lingo: Map[String, Any] = Map.empty
+    def stampWith(stamper:StamperWrapper, values:Map[String, Any]) : Unit = stamper.stamp(values++lingo)
   }
 
   class WriteDsl extends InternalDsl {
@@ -111,12 +100,23 @@ trait PdfDsl {
       currentSection = null
     }
 
+    override def stampWith(stamper:StamperWrapper, defaults:Map[String, Any]) : Unit = {
+      var coordinates : Map[String, Any] = Map.empty
+      for(internal <- internals) {
+        val newDefaults = defaults ++ lingo ++ coordinates
+        internal.stampWith(stamper, newDefaults)
+        val mapWrapper = new MapWrapper(newDefaults)
+        val(x, y) = mapWrapper.at
+        coordinates = Map("AT"->(x, y.floatValue - mapWrapper.fontSize))
+      }
+    }
+
     override def toString: String = "SectionDsl" + lingo.toString + "\n" + internals.mkString("\n")
   }
 
-  class MapWrapper(mapIn:Map[String, Any]) {
-    val text = mapIn("TEXT").toString
-    val at = mapIn("AT") match { case (x: Number, y: Number) => (x.floatValue, y.floatValue) }
+  class MapWrapper(val mapIn:Map[String, Any]) {
+    val text = if(mapIn.contains("TEXT")) mapIn("TEXT").toString else ""
+    val at = { val (x : Number, y : Number) = mapIn("AT"); (x.floatValue, y.floatValue) }
     val fontSize = mapIn("FONT_SIZE") match { case size: Int => size.floatValue }
     val page = mapIn("PAGE") match { case page: Int => page }
     val baseFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
@@ -126,6 +126,8 @@ trait PdfDsl {
     private val reader = new PdfReader(bytesIn)
     private val out = new ByteArrayOutputStream
     private val stamper = new PdfStamper(reader, out);
+
+    def stamp(map:Map[String, Any]) : Unit = stamp(new MapWrapper(map))
 
     def stamp(values: MapWrapper) {
       val over = stamper.getOverContent(values.page)

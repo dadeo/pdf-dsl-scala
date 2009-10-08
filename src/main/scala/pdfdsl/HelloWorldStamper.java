@@ -27,6 +27,23 @@ public class HelloWorldStamper {
 				over.setTextMatrix(30, 30);
 				over.showText("page " + i);
 				over.endText();
+
+
+                PdfPTable table = new PdfPTable(2);
+                table.setSpacingBefore(20);
+                table.addCell("first name");
+                table.addCell("last name");
+                table.addCell("pinky");
+                table.addCell("jones");
+
+                ColumnText ct = new ColumnText(over);
+                ct.addElement(new Phrase("(English:) hello, (Esperanto:) he, alo, saluton, (Latin:) heu, ave, (French:) all™, (Italian:) ciao, (German:) hallo, he, heda, holla, (Portuguese:) al™, ol‡, hei, psiu, bom d’a, (Dutch:) hallo, dag, (Spanish:) ola, eh, (Catalan:) au, bah, eh, ep, (Swedish:) hej, hejsan(Danish:) hallo, dav, davs, goddag, hej, (Norwegian:) hei; morn, (Papiamento:) halo; hallo; k’ tal, (Faeroese:) hall—, hoyr, (Turkish:) alo, merhaba, (Albanian:) tungjatjeta\n"));
+                ct.addElement(table);
+                ct.setSimpleColumn(36, 36, PageSize.A4.getWidth() - 36, 300, 18, Element.ALIGN_JUSTIFIED);
+                int status = ColumnText.START_COLUMN;
+                while(ColumnText.hasMoreText(status)) {
+                    status = ct.go();
+                }
 			}
 			stamper.close();
 		} catch (IOException e) {
