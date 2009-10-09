@@ -21,9 +21,12 @@ class LocationsTest extends JUnit3Suite with PdfDsl {
     assertEquals(400.0f, rect.getRight)
   }
 
-  def test_BaseLocation_solo() {
-    def x = new BaseLocation(42f)
-    assertEquals(42f, x.value(rect, mapWrapper))
+  def test_BaseLocation_Int() {
+    assertEquals(42f, 42.value(rect, mapWrapper))
+  }
+
+  def test_BaseLocation_Float() {
+    assertEquals(42f, 42f.value(rect, mapWrapper))
   }
 
   def test_top() {
@@ -48,7 +51,12 @@ class LocationsTest extends JUnit3Suite with PdfDsl {
   }
 
   def test_bottom_plus_base() {
-    def x = bottom + new BaseLocation(42f)
+    def x = bottom + 42
+    assertEquals(92f, x.value(rect, mapWrapper))
+  }
+
+  def test_int_before_location() {
+    def x = 42 + bottom
     assertEquals(92f, x.value(rect, mapWrapper))
   }
 

@@ -1,37 +1,11 @@
 package pdfdsl
 
 
-import com.lowagie.text._
 import com.lowagie.text.pdf.PdfWriter
+import com.lowagie.text.{Section, Document, Paragraph, Chapter}
 import java.io.FileOutputStream
 
-object DslTester extends Application with PdfDsl {
-  createPdf("target/HelloWorldRead.pdf")
-
-  val bytes = stamp(file("target/HelloWorldRead.pdf")) {
-
-    write text "hello world 5" at (25, 700)
-    write text "hello world 6" at (26, 680) page 2
-    write text "hello world 7" at (27, 660) page 1
-    write text "bottom-right" at (right - 125, bottom) page 1
-    write text "top-right" at (right - 110, top - fontSize) page 1
-    write text "top-left" at (left, top - fontSize) page 1
-    write text "top-center" at ((right - left) / 2, top - fontSize) page 1
-    write text "almost-top-center" at (center, top - fontSize - fontSize) page 1
-
-    section page 1 at (100, 300) contains {
-      line text "pinky jones"
-      line text "suite abc"
-      line text "123 main st"
-      line text "des moines, ia 50023"
-    }
-
-  }
-
-  val out = new FileOutputStream("target/HelloWorldStamper1.pdf")
-  out write bytes
-  out.close
-
+object TestPdfFactory {
   def createPdf(filename: String) {
     var document = new Document();
     PdfWriter.getInstance(document, new FileOutputStream(filename));
@@ -45,7 +19,7 @@ object DslTester extends Application with PdfDsl {
             "(Norwegian:) hei; morn, (Papiamento:) halo; hallo; k\u00ed tal, " +
             "(Faeroese:) hall\u00f3, hoyr, (Turkish:) alo, merhaba, (Albanian:) tungjatjeta");
     def universe = new Chapter("To the Universe:", 1);
-    var section: com.lowagie.text.Section = null
+    var section: Section = null
     section = universe.addSection("to the World:");
     section.add(hello);
     section = universe.addSection("to the Sun:");

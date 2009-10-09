@@ -29,6 +29,10 @@ trait PdfDsl {
     new BaseLocation(number.floatValue)
   }
 
+  implicit def convert(number: Float): Location = {
+    new BaseLocation(number)
+  }
+
   implicit def convert(s: String): File = new File(s)
 
   class Write
