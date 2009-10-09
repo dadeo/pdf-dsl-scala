@@ -19,6 +19,11 @@ class WriteDsl extends InternalDsl {
     this
   }
 
+  def justified(location: Location) = {
+    lingo += ("JUSTIFICATION" -> location)
+    this
+  }
+
   override def toString: String = "WriteDsl" + lingo.toString
 }
 

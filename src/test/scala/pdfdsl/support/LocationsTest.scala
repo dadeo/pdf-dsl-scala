@@ -11,7 +11,11 @@ class LocationsTest extends JUnit3Suite with PdfDsl {
 
   override def setUp() {
     rect = new Rectangle(75, 50, 400, 700)
-    mapWrapper = new MapWrapper(Map("AT"->(new BaseLocation(5), new BaseLocation(10)), "PAGE"->2, "FONT_SIZE"->18))
+    mapWrapper = new MapWrapper(Map(
+      "AT"->(new BaseLocation(5), new BaseLocation(10)),
+      "PAGE"->2,
+      "FONT_SIZE"->18,
+      "JUSTIFICATION"->Locations.center))
   }
 
   def testRectangleDimensions() {

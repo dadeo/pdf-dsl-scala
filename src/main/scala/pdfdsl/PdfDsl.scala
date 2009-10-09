@@ -53,7 +53,7 @@ trait PdfDsl {
 
   var internals: List[InternalDsl] = List()
   var currentSection: SectionDsl = null
-  val defaults = Map("FONT_SIZE" -> 18, "PAGE" -> 1)
+  val defaults = Map("FONT_SIZE" -> 18, "PAGE" -> 1, "JUSTIFICATION" -> Locations.left)
 
   def stamp(contents: Array[byte])(f: => Unit) = {
     internals = List()

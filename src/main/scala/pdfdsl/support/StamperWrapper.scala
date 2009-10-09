@@ -16,7 +16,7 @@ class StamperWrapper(bytesIn: Array[Byte]) {
     over.beginText();
     over.setFontAndSize(values.baseFont, values.fontSize)
     val (x, y) = values.at
-    val adjustedX = x.value(reader.getPageSizeWithRotation(values.page), values)
+    val adjustedX = x.value(reader.getPageSizeWithRotation(values.page), values) - values.justificationOffset
     val adjustedY = y.value(reader.getPageSizeWithRotation(values.page), values)
     over.setTextMatrix(adjustedX, adjustedY)
     over.showText(values.text)
@@ -27,4 +27,5 @@ class StamperWrapper(bytesIn: Array[Byte]) {
     stamper.close
     out.toByteArray
   }
+
 }
