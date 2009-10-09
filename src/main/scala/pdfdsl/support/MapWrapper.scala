@@ -13,7 +13,12 @@ class MapWrapper(val mapIn: Map[String, Any]) {
     val justification = mapIn("JUSTIFICATION") match { case location: Location => location }
     def center = baseFont.getWidthPoint(text, fontSize) / 2
     def right = baseFont.getWidthPoint(text, fontSize)
-    if (justification == Locations.center) center else if (justification == Locations.right) right else 0
+    justification match {
+      case Locations.center => center
+      case Locations.right => right
+      case _ => 0
+    }
+    //if (justification == Locations.center) center else if (justification == Locations.right) right else 0
   }
 }
 
