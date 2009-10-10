@@ -2,12 +2,12 @@ package pdfdsl
 
 
 import java.io.FileOutputStream
+import support.FileUtility
 
-object DslTester extends Application with PdfDsl {
+object DslTester extends Application {
   TestPdfFactory.createPdf("target/HelloWorldRead.pdf")
 
-  val bytes = stamp(file("target/HelloWorldRead.pdf")) {
-
+  object updatePdf extends PdfDsl {
     write text "hello world 5" at (25, 700)
     write text "hello world 6" at (26, 680) page 2
     write text "hello world 7" at (27, 660) page 1
@@ -41,8 +41,9 @@ object DslTester extends Application with PdfDsl {
       line text "123 main st"
       line text "des moines, ia 50023"
     }
-
   }
+
+  val bytes = updatePdf.stamp(FileUtility.loadBytes("target/HelloWorldRead.pdf"))
 
   val out = new FileOutputStream("target/HelloWorldStamper1.pdf")
   out write bytes
