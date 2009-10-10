@@ -20,7 +20,21 @@ object DslTester extends Application with PdfDsl {
     write text "top-center-justified" justified center at (center, top - fontSize * 3) page 1
     write text "top-right-justified" justified right at (center, top - fontSize * 4) page 1
 
-    section page 1 at (100, 300) contains {
+    section page 1 at (left + 50, 400) contains {
+      line text "pinky jones"
+      line text "suite abc"
+      line text "123 main st"
+      line text "des moines, ia 50023"
+    }
+
+    section page 1 at (center, 300) justified center contains {
+      line text "pinky jones"
+      line text "suite abc"
+      line text "123 main st"
+      line text "des moines, ia 50023"
+    }
+
+    section page 1 at (right - 50, 200) justified right contains {
       line text "pinky jones"
       line text "suite abc"
       line text "123 main st"

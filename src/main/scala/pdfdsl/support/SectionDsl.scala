@@ -16,6 +16,11 @@ class SectionDsl extends InternalDsl {
     this
   }
 
+  def justified(location: Location) = {
+    lingo += ("JUSTIFICATION" -> location)
+    this
+  }
+
   def contains(f: => Unit) {
     f
   }
