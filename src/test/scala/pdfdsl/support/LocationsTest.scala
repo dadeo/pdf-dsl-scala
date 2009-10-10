@@ -6,23 +6,29 @@ import junit.framework.Assert._
 import support.Locations.BaseLocation
 
 class LocationsTest extends JUnit3Suite with PdfDsl {
+  val FONT_SIZE = 18f
+  val TOP = 700f
+  val RIGHT = 400f
+  val BOTTOM = 50f
+  val LEFT = 75f
+
   var rect : Rectangle = null
   var mapWrapper : MapWrapper = null
 
   override def setUp() {
-    rect = new Rectangle(75, 50, 400, 700)
+    rect = new Rectangle(LEFT, BOTTOM, RIGHT, TOP)
     mapWrapper = new MapWrapper(Map(
       "AT"->(new BaseLocation(5), new BaseLocation(10)),
       "PAGE"->2,
-      "FONT_SIZE"->18,
+      "FONT_SIZE"->FONT_SIZE,
       "JUSTIFICATION"->Locations.center))
   }
 
   def testRectangleDimensions() {
-    assertEquals(700.0f, rect.getTop)
-    assertEquals(50.0f, rect.getBottom)
-    assertEquals(75.0f, rect.getLeft)
-    assertEquals(400.0f, rect.getRight)
+    assertEquals(TOP, rect.getTop)
+    assertEquals(BOTTOM, rect.getBottom)
+    assertEquals(LEFT, rect.getLeft)
+    assertEquals(RIGHT, rect.getRight)
   }
 
   def test_BaseLocation_Int() {
@@ -34,44 +40,52 @@ class LocationsTest extends JUnit3Suite with PdfDsl {
   }
 
   def test_top() {
-    assertEquals(700f, top.value(rect, mapWrapper))
+    assertEquals(TOP, top.value(rect, mapWrapper))
   }
 
   def test_bottom() {
-    assertEquals(50f, bottom.value(rect, mapWrapper))
+    assertEquals(BOTTOM, bottom.value(rect, mapWrapper))
   }
 
   def test_left() {
-    assertEquals(75f, left.value(rect, mapWrapper))
+    assertEquals(LEFT, left.value(rect, mapWrapper))
   }
 
   def test_right() {
-    assertEquals(400f, right.value(rect, mapWrapper))
+    assertEquals(RIGHT, right.value(rect, mapWrapper))
+  }
+
+  def test_center() {
+    assertEquals((RIGHT - LEFT) / 2, center.value(rect, mapWrapper))
+  }
+
+  def test_middle() {
+    assertEquals((TOP - BOTTOM) / 2, middle.value(rect, mapWrapper))
   }
 
   def test_top_minus_base() {
     def x = top - new BaseLocation(42f)
-    assertEquals(658f, x.value(rect, mapWrapper))
+    assertEquals(TOP - 42, x.value(rect, mapWrapper))
   }
 
   def test_bottom_plus_base() {
     def x = bottom + 42
-    assertEquals(92f, x.value(rect, mapWrapper))
+    assertEquals(BOTTOM + 42, x.value(rect, mapWrapper))
   }
 
   def test_int_before_location() {
     def x = 42 + bottom
-    assertEquals(92f, x.value(rect, mapWrapper))
+    assertEquals(BOTTOM + 42, x.value(rect, mapWrapper))
   }
 
   def test_top_minus_fontSize() {
     def x = top - fontSize
-    assertEquals(682f, x.value(rect, mapWrapper))
+    assertEquals(TOP - FONT_SIZE, x.value(rect, mapWrapper))
   }
 
   def test_multiple_values() {
-    assertEquals(782f, (top - fontSize + 200 - 100).value(rect, mapWrapper))
-    assertEquals(618f, (top - 200 + fontSize + 100).value(rect, mapWrapper))
-    assertEquals(382f, (top - (200 + fontSize + 100)).value(rect, mapWrapper))
+    assertEquals(TOP - FONT_SIZE + 200 - 100, (top - fontSize + 200 - 100).value(rect, mapWrapper))
+    assertEquals(TOP - 200 + FONT_SIZE + 100, (top - 200 + fontSize + 100).value(rect, mapWrapper))
+    assertEquals(TOP - (200 + FONT_SIZE + 100), (top - (200 + fontSize + 100)).value(rect, mapWrapper))
   }
 }

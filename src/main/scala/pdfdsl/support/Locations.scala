@@ -54,6 +54,10 @@ object Locations {
     def value(rect: Rectangle, mapWrapper: MapWrapper) = (rect.getRight - rect.getLeft) / 2
   }
 
+  object middle extends Location {
+    def value(rect: Rectangle, mapWrapper: MapWrapper) = (rect.getTop - rect.getBottom) / 2
+  }
+
   object fontSize extends Location {
     def value(rect: Rectangle, mapWrapper: MapWrapper) = mapWrapper.fontSize
   }

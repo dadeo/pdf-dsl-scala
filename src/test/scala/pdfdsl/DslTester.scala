@@ -19,6 +19,7 @@ object DslTester extends Application with PdfDsl {
     write text "almost-top-center" at (center, top - fontSize - fontSize) page 1
     write text "top-center-justified" justified center at (center, top - fontSize * 3) page 1
     write text "top-right-justified" justified right at (center, top - fontSize * 4) page 1
+    write text "centered-middle" justified center at (center, middle) page 1
 
     section page 1 at (left + 50, 400) contains {
       line text "pinky jones"

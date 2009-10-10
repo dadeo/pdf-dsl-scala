@@ -49,6 +49,7 @@ trait PdfDsl {
   val left = Locations.left
   val right = Locations.right
   val center = Locations.center
+  val middle = Locations.middle
   val fontSize = Locations.fontSize
 
   var internals: List[InternalDsl] = List()
