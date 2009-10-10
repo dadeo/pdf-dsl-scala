@@ -4,7 +4,9 @@ package pdfdsl.support
 trait InternalDsl {
   var lingo: Map[String, Any] = Map.empty
 
-  def stampWith(stamper: StamperWrapper, values: Map[String, Any]): Unit = stamper.stamp(values ++ lingo)
+  def page = lingo("PAGE") match { case page: Int => page }
+
+  def stampWith(dslWriter: DslWriter, values: Map[String, Any]): Unit = dslWriter.stamp(values ++ lingo)
 }
 
  

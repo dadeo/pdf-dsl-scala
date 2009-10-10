@@ -29,11 +29,11 @@ class SectionDsl extends InternalDsl {
     internals = internals ::: List(line)
   }
 
-  override def stampWith(stamper: StamperWrapper, defaults: Map[String, Any]): Unit = {
+  override def stampWith(dslWriter: DslWriter, defaults: Map[String, Any]): Unit = {
     var coordinates: Map[String, Any] = Map.empty
     for (internal <- internals) {
       val newDefaults = defaults ++ lingo ++ coordinates
-      internal.stampWith(stamper, newDefaults)
+      internal.stampWith(dslWriter, newDefaults)
       val mapWrapper = new MapWrapper(newDefaults)
       val (x: Location, y: Location) = mapWrapper.at
       val adjustedY = y - new BaseLocation(mapWrapper.fontSize)

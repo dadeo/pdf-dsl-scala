@@ -56,10 +56,27 @@ trait PdfDsl {
   var currentSection: SectionDsl = null
   val defaults = Map("FONT_SIZE" -> 18, "PAGE" -> 1, "JUSTIFICATION" -> Locations.left)
 
-  def stamp(contents: Array[Byte]) : Array[Byte] = {
-    val stamperWrapper = new StamperWrapper(contents)
-    internals.foreach {_.stampWith(stamperWrapper, defaults)}
-    stamperWrapper.bytes
+  def create() : Array[Byte] = {
+    val dslWriter = new PdfCreator()
+    var lastPage = 1
+    sort(internals).foreach { instruction =>
+      val page = new MapWrapper(defaults ++ instruction.lingo).page
+      while(lastPage < page) {
+        dslWriter.insertPage
+        lastPage += 1
+      }
+      instruction.stampWith(dslWriter, defaults)
+    }
+    dslWriter.bytes
   }
 
+  def stamp(contents: Array[Byte]) : Array[Byte] = {
+    val dslWriter : DslWriter = new StamperWrapper(contents)
+    internals.foreach {_.stampWith(dslWriter, defaults)}
+    dslWriter.bytes
+  }
+
+  def sort(list:List[InternalDsl]) : List[InternalDsl] = {
+    list.sort((first, next) => new MapWrapper(defaults ++ first.lingo).page <= new MapWrapper(defaults ++ next.lingo).page)
+  }
 }
