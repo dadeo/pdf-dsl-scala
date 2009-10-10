@@ -71,8 +71,14 @@ trait PdfDsl {
   }
 
   def stamp(contents: Array[Byte]) : Array[Byte] = {
-    val dslWriter : DslWriter = new StamperWrapper(contents)
-    internals.foreach {_.stampWith(dslWriter, defaults)}
+    val dslWriter = new StamperWrapper(contents)
+    internals.foreach { instruction =>
+      val page = new MapWrapper(defaults ++ instruction.lingo).page
+      while(dslWriter.pageCount < page) {
+        dslWriter.insertPage
+      }
+      instruction.stampWith(dslWriter, defaults)
+    }
     dslWriter.bytes
   }
 
