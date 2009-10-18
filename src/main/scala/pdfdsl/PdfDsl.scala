@@ -24,6 +24,25 @@ trait PdfDsl {
     lineDsl
   }
 
+  implicit def convert(table: Table) = {
+    val internal = new TableDsl
+    internals = internals ::: List(internal)
+    currentTable = internal
+    internal
+  }
+
+  implicit def convert(header: Header) = {
+    val dsl = new TableHeaderDsl
+    currentTable << dsl
+    dsl
+  }
+
+  implicit def convert(row: Row) = {
+    val dsl = new TableRowDsl
+    currentTable << dsl
+    dsl
+  }
+
   implicit def convert(number: Int): Location = {
     new BaseLocation(number.floatValue)
   }
@@ -43,6 +62,15 @@ trait PdfDsl {
   class Section
   val section = new Section
 
+  class Table
+  val table = new Table
+
+  class Header
+  val headers = new Header
+
+  class Row
+  val rows = new Row
+
   val top = Locations.top
   val bottom = Locations.bottom
   val left = Locations.left
@@ -53,7 +81,8 @@ trait PdfDsl {
 
   var internals: List[InternalDsl] = List()
   var currentSection: SectionDsl = null
-  val defaults = Map("FONT_SIZE" -> 18, "PAGE" -> 1, "JUSTIFICATION" -> Locations.left)
+  var currentTable: TableDsl = null
+  val defaults = Map("FONT_SIZE" -> 18, "PAGE" -> 1, "JUSTIFICATION" -> Locations.left, "HEIGHT" -> 500, "WIDTH" -> 500)
 
   def create() : Array[Byte] = {
     val dslWriter = new PdfCreator()

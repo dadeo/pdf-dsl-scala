@@ -7,8 +7,18 @@ object DslTester extends Application {
   TestPdfFactory.createPdf("target/HelloWorldRead.pdf")
 
   object updatePdf extends PdfDsl {
+    table at (100, top - 200) page 1 width 500 height 600 contains {
+      headers justified center data List("hello\nworld", "column 0", "column 1", "column 2", "column 3")
+
+      rows data List(
+        List("c1", "c2", "c3", "c4", "c5"),
+        List("c1", "c2", "c3", "c4", "c5"),
+        List("c1", "c2", "c3", "c4", "c5")
+        )
+    }
+
     write text "centered-middle" justified center at (center, middle) page 5
-    write text "hello world 5" at (25, 700)
+    write text "hello world 1" at (25, 700)
     write text "hello world 6" at (26, 680) page 2
     write text "hello world 7" at (27, 660) page 1
     write text "bottom-right" justified right at (right, bottom) page 1
