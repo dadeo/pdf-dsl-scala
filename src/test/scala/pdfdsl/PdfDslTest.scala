@@ -20,16 +20,16 @@ class PdfDslTest extends JUnit3Suite {
     unsortedList += createInternalDslForPage(1)
     unsortedList += createInternalDslForPage(3)
     unsortedList += createInternalDslForPage(1)
-    assertEquals(List(1,1,2,3,3,4), extractPages(new PdfDsl{}.sort(unsortedList)))
+    assertEquals(List(1, 1, 2, 3, 3, 4), extractPages(new PdfDsl {}.sort(unsortedList)))
   }
 
-  private def extractPages(instructions:List[InternalDsl]) = {
-    instructions.map { _.page }
+  private def extractPages(instructions: List[InternalDsl]) = {
+    instructions.map {_.page}
   }
 
   private def createInternalDslForPage(page: Int) = {
     val dsl = new WriteDsl
-    dsl.at(Tuple2(new BaseLocation(3),new BaseLocation(5)))
+    dsl.at(Tuple2(new BaseLocation(3), new BaseLocation(5)))
     dsl.page(page)
     dsl
   }

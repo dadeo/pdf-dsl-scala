@@ -1,8 +1,7 @@
 package pdfdsl
 
 
-import java.io.FileOutputStream
-import support.FileUtility
+import support.FileUtility._
 
 object DslTester extends Application {
   TestPdfFactory.createPdf("target/HelloWorldRead.pdf")
@@ -44,11 +43,6 @@ object DslTester extends Application {
     }
   }
 
-//  val bytes = updatePdf.stamp(FileUtility.loadBytes("target/HelloWorldRead.pdf"))
-  val bytes = updatePdf.create
-
-  val out = new FileOutputStream("target/HelloWorldStamper1.pdf")
-  out write bytes
-  out.close
-
+  write("target/HelloWorldCreate.pdf")(updatePdf.create)
+  write("target/HelloWorldUpdate.pdf")(updatePdf.stamp(loadBytes("target/HelloWorldRead.pdf")))
 }

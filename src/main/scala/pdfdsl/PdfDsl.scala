@@ -1,7 +1,6 @@
 package pdfdsl
 
-import com.lowagie.text.pdf.{PdfReader, PdfStamper, BaseFont}
-import java.io.{File, ByteArrayOutputStream, FileInputStream}
+import java.io.File
 import support._
 import support.Locations.{BaseLocation, Location}
 

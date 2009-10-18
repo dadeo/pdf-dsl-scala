@@ -12,16 +12,16 @@ class LocationsTest extends JUnit3Suite with PdfDsl {
   val BOTTOM = 50f
   val LEFT = 75f
 
-  var rect : Rectangle = null
-  var mapWrapper : MapWrapper = null
+  var rect: Rectangle = null
+  var mapWrapper: MapWrapper = null
 
   override def setUp() {
     rect = new Rectangle(LEFT, BOTTOM, RIGHT, TOP)
     mapWrapper = new MapWrapper(Map(
-      "AT"->(new BaseLocation(5), new BaseLocation(10)),
-      "PAGE"->2,
-      "FONT_SIZE"->FONT_SIZE,
-      "JUSTIFICATION"->Locations.center))
+      "AT" -> (new BaseLocation(5), new BaseLocation(10)),
+      "PAGE" -> 2,
+      "FONT_SIZE" -> FONT_SIZE,
+      "JUSTIFICATION" -> Locations.center))
   }
 
   def testRectangleDimensions() {

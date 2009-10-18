@@ -1,7 +1,7 @@
 package pdfdsl.support
 
 
-import java.io.{File, ByteArrayOutputStream, FileInputStream}
+import java.io.{FileOutputStream, File, ByteArrayOutputStream, FileInputStream}
 
 object FileUtility {
   def loadBytes(fileName: String) : Array[Byte] = loadBytes(new File(fileName))
@@ -20,5 +20,11 @@ object FileUtility {
     read
     bos.toByteArray
   }
+
+  def write(fileName :String)(f: => Array[Byte]) = {
+    val out = new FileOutputStream(fileName)
+    out write f
+    out.close
+  }  
 
 }
